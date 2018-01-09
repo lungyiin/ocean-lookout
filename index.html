@@ -237,7 +237,7 @@
                     for (data in new_data[ocean]) {
                         if (this.oceans_grouped[ocean][data] !== new_data[ocean][data] && this.oceans_grouped[ocean]['name'] === new_data[ocean]['name']) {
 
-                            if(new_data[ocean][data]['type'] === 'qar' && new_data[ocean][data]['type'] !== this.oceans_grouped[ocean][data]['type']) {
+                            if(new_data[ocean][data]['type'] === 'qar' && new_data[ocean][data]['type'] !== this.oceans_grouped[ocean][data]['type'] && hasPermissions) {
                                 var notification = new Notification('Ocean Lookout', {body: 'The Queen Anne\'s Revenge has Sailed on ' + this.oceans_grouped[ocean]['name'], icon: 'https://piratesonline.co/static/img/PiratesWebsiteLogoSmall.png' })
                             }
 
