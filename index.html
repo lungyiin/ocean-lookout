@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lookout :: The Legend of Pirates Online</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/lumen/bulmaswatch.min.css">
+    <link rel="icon" href="https://piratesonline.co/static/img/icons/favicon.ico"/>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            Oceans Lookout &#128270;
+        </h1>
+
+    </div>
+
+    <div id="app" class="container">
+        <div class="control">
+            <input v-model="query" class="input" placeholder="Search for an Ocean">
+        </div>
+        <br/>
+        <transition-group
+                name="staggered-fade"
+                tag="ul"
+                v-bind:css="false"
+                v-on:before-enter="beforeEnter"
+                v-on:enter="enter"
+                v-on:leave="leave"
+        >
+            <div v-for="(group, index) in computedList"
+                 v-bind:key="group"
+                 v-bind:data-index="index">
+                <div role="list" class="columns">
+                    <div v-for="ocean in group" class="column is-3">
+                        <div class="box">
+                            <h2 class="title is-5">{{ocean.name}}
+                                <span v-if="ocean.population < 100">
+                                <span class="tag is-success">{{ocean.population}}</span>
+                            </span>
+                                <span v-else>
+                                <span class="tag is-danger">{{ocean.population}}</span>
+                            </span>
+                            </h2>
+
+                            <div v-if="ocean.fleet">
+                                <div v-if="ocean.fleet.type = 'qar'">
+                                    The Queen Anne's Revenge is Currently Sailing &#128305;
+                                </div>
+                                <div v-else>
+                                    A Treasure Fleet is Sailing to Raven's Cove &#128176;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition-group>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+<script>
+    var API = 'https://api.piratesonline.co/shards';
+
+    function updateOceans() {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open('GET', API, false);
+        xmlHttp.send(null);
+
+        return xmlHttp.responseText;
+
+    }
+
+    function array_chunk(input, size, preserveKeys) {
+        // eslint-disable-line camelcase
+        //  discuss at: http://locutus.io/php/array_chunk/
+        // original by: Carlos R. L. Rodrigues (http://www.jsfromhell.com)
+        // improved by: Brett Zamir (http://brett-zamir.me)
+        //      note 1: Important note: Per the ECMAScript specification,
+        //      note 1: objects may not always iterate in a predictable order
+        //   example 1: array_chunk(['Kevin', 'van', 'Zonneveld'], 2)
+        //   returns 1: [['Kevin', 'van'], ['Zonneveld']]
+        //   example 2: array_chunk(['Kevin', 'van', 'Zonneveld'], 2, true)
+        //   returns 2: [{0:'Kevin', 1:'van'}, {2: 'Zonneveld'}]
+        //   example 3: array_chunk({1:'Kevin', 2:'van', 3:'Zonneveld'}, 2)
+        //   returns 3: [['Kevin', 'van'], ['Zonneveld']]
+        //   example 4: array_chunk({1:'Kevin', 2:'van', 3:'Zonneveld'}, 2, true)
+        //   returns 4: [{1: 'Kevin', 2: 'van'}, {3: 'Zonneveld'}]
+        var x;
+        var p = '';
+        var i = 0;
+        var c = -1;
+        var l = input.length || 0;
+        var n = [];
+        if (size < 1) {
+            return null
+        }
+        if (Object.prototype.toString.call(input) === '[object Array]') {
+            if (preserveKeys) {
+                while (i < l) {
+                    (x = i % size)
+                        ? n[c][i] = input[i]
+                        : n[++c] = {};
+                    n[c][i] = input[i];
+                    i++
+                }
+            } else {
+                while (i < l) {
+                    (x = i % size)
+                        ? n[c][x] = input[i]
+                        : n[++c] = [input[i]];
+                    i++
+                }
+            }
+        } else {
+            if (preserveKeys) {
+                for (p in input) {
+                    if (input.hasOwnProperty(p)) {
+                        (x = i % size)
+                            ? n[c][p] = input[p]
+                            : n[++c] = {};
+                        n[c][p] = input[p];
+                        i++
+                    }
+                }
+            } else {
+                for (p in input) {
+                    if (input.hasOwnProperty(p)) {
+                        (x = i % size)
+                            ? n[c][x] = input[p]
+                            : n[++c] = [input[p]];
+                        i++
+                    }
+                }
+            }
+        }
+        return n
+    }
+
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            query: '',
+            oceans_grouped: Object.values(JSON.parse(updateOceans()))
+        },
+        computed: {
+            computedList: function () {
+                var vm = this;
+                return array_chunk(this.oceans_grouped.filter(function (ocean) {
+                    return ocean.name.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1
+                }), 4, true)
+            }
+        },
+        methods: {
+            beforeEnter: function (el) {
+                el.style.opacity = 0;
+            },
+            enter: function (el, done) {
+                var delay = el.dataset.index * 150;
+                setTimeout(function () {
+                    Velocity(
+                        el,
+                        {opacity: 1},
+                        {complete: done}
+                    )
+                }, delay)
+            },
+            leave: function (el, done) {
+                var delay = el.dataset.index * 150;
+                setTimeout(function () {
+                    Velocity(
+                        el,
+                        {opacity: 0},
+                        {complete: done}
+                    )
+                }, delay)
+            }
+        }
+    })
+</script>
+</body>
+</html>
