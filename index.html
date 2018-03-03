@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/lumen/bulmaswatch.min.css"/>
 
     <link rel="stylesheet" href="style.css"/>
-    <link rel="icon" href="https://piratesonline.co/static/img/icons/favicon.ico"/>
+    <link rel="icon" href="https://tlopo.com/static/img/icons/favicon.ico"/>
 
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
@@ -92,7 +92,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 <script>
-    var API = 'https://api.piratesonline.co/shards';
+    var API = 'https://api.tlopo.com/shards';
 
     function queryOceanAPI() {
         var xmlHttp = new XMLHttpRequest();
@@ -228,7 +228,7 @@
                             if (new_data[ocean][data]['type'] === 'qar' && new_data[ocean][data]['type'] !== this.oceans_grouped[ocean][data]['type'] && hasPermissions) {
                                 var notification = new Notification('Ocean Lookout', {
                                     body: 'The Queen Anne\'s Revenge has Sailed on ' + this.oceans_grouped[ocean]['name'],
-                                    icon: 'https://piratesonline.co/static/img/PiratesWebsiteLogoSmall.png'
+                                    icon: 'https://tlopo.com/static/img/PiratesWebsiteLogoSmall.png'
                                 })
                             }
 
